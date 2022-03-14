@@ -4,13 +4,15 @@ import { BrowserRouter, Route, Switch } from 'react-router-dom';
 import '~~/styles/main-page.css';
 
 import { GenericContract } from 'eth-components/ant/generic-contract';
-import { useContractReader, useBalance, useEthersAdaptorFromProviderOrSigners, useEventListener } from 'eth-hooks';
+import { useBalance, useEthersAdaptorFromProviderOrSigners } from 'eth-hooks';
 import { useEthersContext } from 'eth-hooks/context';
 import { useDexEthPrice } from 'eth-hooks/dapps';
 import { asEthersAdaptor } from 'eth-hooks/functions';
 
-import { MainPageMenu, MainPageContracts, MainPageFooter, MainPageHeader } from './components/main';
+import { MainPageMenu, MainPageFooter, MainPageHeader } from './components/main';
 import { useScaffoldHooksExamples as useScaffoldHooksExamples } from './components/main/hooks/useScaffoldHooksExamples';
+import { DEX } from './components/pages/dex/DEX';
+import { ERC20 } from './generated/contract-types';
 
 import { useBurnerFallback } from '~~/components/main/hooks/useBurnerFallback';
 import { useScaffoldProviders as useScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
@@ -71,19 +73,9 @@ export const Main: FC = () => {
   // -----------------------------
 
   // init contracts
-  const yourContract = useAppContracts('YourContract', ethersContext.chainId);
   const mainnetDai = useAppContracts('DAI', NETWORKS.mainnet.chainId);
-
-  // keep track of a variable from the contract in the local React state:
-  const [purpose, update] = useContractReader(
-    yourContract,
-    yourContract?.purpose,
-    [],
-    yourContract?.filters.SetPurpose()
-  );
-
-  // 📟 Listen for broadcast events
-  const [setPurposeEvents] = useEventListener(yourContract, 'SetPurpose', 0);
+  const balloons = useAppContracts('Balloons', ethersContext.chainId) as any as ERC20;
+  const dexContract = useAppContracts('DEX', ethersContext.chainId);
 
   // -----------------------------
   // .... 🎇 End of examples
@@ -108,7 +100,7 @@ export const Main: FC = () => {
         <MainPageMenu route={route} setRoute={setRoute} />
         <Switch>
           <Route exact path="/">
-            <MainPageContracts scaffoldAppProviders={scaffoldAppProviders} />
+            <DEX dexContract={dexContract} tokenContract={balloons} scaffoldAppProviders={scaffoldAppProviders} />
           </Route>
           {/* you can add routes here like the below examlples */}
           <Route path="/hints">

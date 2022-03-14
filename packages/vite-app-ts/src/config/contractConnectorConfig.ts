@@ -24,11 +24,15 @@ export const contractConnectorConfig = () => {
   try {
     const result = {
       // 🙋🏽‍♂️ Add your hadrdhat contracts here
-      YourContract: createConnectorForHardhatContract(
-        'YourContract',
-        hardhatContracts.YourContract__factory,
-        hardhatContractsJson
-      ),
+      // ExampleContract: createConnectorForHardhatContract(
+      //  'ExampleContract',
+      //  hardhatContracts.ExampleContract__factory,
+      //  hardhatContractsJson
+      // ),
+
+      Balloons: createConnectorForHardhatContract('Balloons', hardhatContracts.Balloons__factory, hardhatContractsJson),
+
+      DEX: createConnectorForHardhatContract('DEX', hardhatContracts.DEX__factory, hardhatContractsJson),
 
       // 🙋🏽‍♂️ Add your external contracts here, make sure to define the address in `externalContractsConfig.ts`
       DAI: createConnectorForExternalContract('DAI', externalContracts.DAI__factory, externalContractsAddressMap),

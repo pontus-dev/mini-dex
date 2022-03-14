@@ -5,9 +5,13 @@ import { useGasPrice } from 'eth-hooks';
 import { useEthersContext } from 'eth-hooks/context';
 import React, { FC, ReactElement } from 'react';
 
+import { TokenBalance } from '../pages/dex/TokenBalance';
+
 import { FaucetHintButton } from '~~/components/common/FaucetHintButton';
 import { IScaffoldAppProviders } from '~~/components/main/hooks/useScaffoldAppProviders';
+import { useAppContracts } from '~~/config/contractContext';
 import { getNetworkInfo } from '~~/functions';
+import { Balloons } from '~~/generated/contract-types';
 
 // displays a page header
 export interface IMainPageHeaderProps {
@@ -23,10 +27,9 @@ export interface IMainPageHeaderProps {
 export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
   const ethersContext = useEthersContext();
   const selectedChainId = ethersContext.chainId;
-
   // 🔥 This hook will get the price of Gas from ⛽️ EtherGasStation
   const [gasPrice] = useGasPrice(ethersContext.chainId, 'fast', getNetworkInfo(ethersContext.chainId));
-
+  const balloons: Balloons = useAppContracts('Balloons', ethersContext.chainId)!;
   /**
    * this shows the page header and other informaiton
    */
@@ -67,8 +70,18 @@ export const MainPageHeader: FC<IMainPageHeaderProps> = (props) => {
         blockExplorer={props.scaffoldAppProviders.targetNetwork.blockExplorer}
         hasContextConnect={true}
       />
+
       <FaucetHintButton scaffoldAppProviders={props.scaffoldAppProviders} gasPrice={gasPrice} />
       {props.children}
+      <TokenBalance
+        name={'Balloons'}
+        img={'🎈'}
+        scaffoldAppProviders={props.scaffoldAppProviders}
+        address={balloons?.address ?? ''}
+        contract={balloons}
+        balance={undefined}
+        dollarMultiplier={undefined}
+      />
     </div>
   );
 
